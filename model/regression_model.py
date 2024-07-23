@@ -28,3 +28,8 @@ predictions = model.predict(X_test)
 # Calculate the mean squared error
 mse = mean_squared_error(y_test, predictions)
 print(f"Mean Squared Error: {mse}")
+
+# Print the first 10 predictions and actual values
+print("\nPredictions vs Actual values:")
+for i in range(10):
+    print(f"Prediction: {predictions[i]:.2f}, Actual: {y_test.iloc[i]:.2f}")
