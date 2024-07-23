@@ -6,9 +6,12 @@ from sklearn.metrics import mean_squared_error
 # Load the dataset
 data = pd.read_csv('data/boston.csv')
 
+# Debug: print the first few rows of the dataframe
+print(data.head())
+
 # Prepare the data
-X = data.drop('MEDV', axis=1)
-y = data['MEDV']
+X = data.drop('medv', axis=1)
+y = data['medv']
 
 # Split the data
 X_train, X_test, y_train, y_test = train_test_split(
