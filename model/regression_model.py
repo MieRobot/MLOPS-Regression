@@ -2,12 +2,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
+import mlflow
+import mlflow.sklearn
 
 # Load the dataset
 data = pd.read_csv('data/boston.csv')
-
-# Debug: print the first few rows of the dataframe
-print(data.head())
 
 # Prepare the data
 X = data.drop('medv', axis=1)
@@ -18,18 +17,25 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# Train the model
-model = LinearRegression()
-model.fit(X_train, y_train)
+# Start an MLflow experiment
+mlflow.set_experiment("Boston Housing Experiment")
 
-# Make predictions
-predictions = model.predict(X_test)
+# Train and log models
+with mlflow.start_run():
+    model = LinearRegression()
+    model.fit(X_train, y_train)
 
-# Calculate the mean squared error
-mse = mean_squared_error(y_test, predictions)
-print(f"Mean Squared Error: {mse}")
+    # Make predictions
+    predictions = model.predict(X_test)
 
-# Print the first 10 predictions and actual values
-print("\nPredictions vs Actual values:")
-for i in range(10):
-    print(f"Prediction: {predictions[i]:.2f}, Actual: {y_test.iloc[i]:.2f}")
+    # Calculate the mean squared error
+    mse = mean_squared_error(y_test, predictions)
+    print(f"Mean Squared Error: {mse}")
+
+    # Log parameters and metrics
+    mlflow.log_param("random_state", 42)
+    mlflow.log_param("test_size", 0.2)
+    mlflow.log_metric("mse", mse)
+
+    # Log the model
+    mlflow.sklearn.log_model(model, "model")
